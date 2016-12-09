@@ -1,0 +1,24 @@
+
+message Request {
+    required RequestType type = 1;
+    optional string text = 2;
+    
+    enum RequestType {
+        DC = 0;
+        LIST = 1;
+        TEXT = 2;
+    }
+}
+
+message Answer {
+    required AnswerType type = 1;
+    optional string sender_name = 2;
+    repeated string list = 3;
+    optional string text = 4;
+    
+    enum AnswerType {
+        LIST = 0;
+        TEXT = 1;
+        GREETING = 2;
+    }
+}

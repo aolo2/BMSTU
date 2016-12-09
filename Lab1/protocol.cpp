@@ -1,4 +1,4 @@
-#include "protocol_good.h"
+#include "protocol.h"
 #include <iostream>
 
 unsigned int hashcode(const std::string &s) {

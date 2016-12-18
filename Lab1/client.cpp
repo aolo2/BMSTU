@@ -3,7 +3,7 @@
 #include <csignal>
 
 
-#include "protocol_good.h"
+#include "protocol.h"
 
 void *listener(void *arg) {
     int fd = *((int *) arg);

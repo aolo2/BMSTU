@@ -1,7 +1,7 @@
 #include <iostream>
 #include <map>
 
-#include "protocol_good.h"
+#include "protocol.h"
 #include "mutex_wrapper.h"
 
 std::map<int, std::string> book;

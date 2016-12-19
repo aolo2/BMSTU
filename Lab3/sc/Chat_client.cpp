@@ -15,6 +15,7 @@ using namespace apache::thrift::transport;
 using namespace  ::chat;
 
 pthread_mutex_t mutex;
+bool logged_in = false;
 int32_t uid;
 int32_t log_id;
 
@@ -24,25 +25,26 @@ void *update(void *arg) {
 
     {
         lock l(&mutex);
-        log_id = client->getCurrentLogId();
+        log_id = client->getCurrentLogId() - 1;
     }
 
-    while (usleep(50000) == 0) {
+    while (logged_in && usleep(500000) == 0) {
         try {
             missed.clear();
             lock l(&mutex);
             client->missedMessages(missed, log_id, uid);
-        } catch (...) {
-            // TODO: what now???
+            log_id = client->getCurrentLogId() - 1;
+        } catch (TException& tx) {
+            std::cout << "ERROR: " << tx.what() << std::endl;
             return NULL;
         }
 
         for (ChatMessage &cm : missed) {
             std::cout << cm.username << "] " << cm.text << std::endl;
         }
-
-        log_id += missed.size();
     }
+
+    return NULL;
 }
 
 int main(int argc, char **argv) {
@@ -51,9 +53,9 @@ int main(int argc, char **argv) {
     boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
 
     ChatClient client(protocol);
-    bool logged_in = false;
-    pthread_t update_thread;
+
     pthread_mutex_init(&mutex, NULL);
+    pthread_t update_thread;
 
     try {
         transport->open();
@@ -62,13 +64,13 @@ int main(int argc, char **argv) {
         while (!logged_in) {
             username.clear();
             std::cout << "Login: ";
-            std::cin >> username;
+            getline(std::cin, username);
             try {
                 uid = client.get_uid(username);
                 std::cout << "Login succesful" << std::endl;
                 logged_in = true;
-            } catch (...) {
-                std::cout << "Try again" << std::endl; //TODO: fix
+            } catch (UsernameTaken &ut) {
+                std::cout << ut.message << std::endl;
             }
         }
 
@@ -77,10 +79,9 @@ int main(int argc, char **argv) {
         ChatMessage msg;
         msg.__set_username(username);
         msg.__set_uid(uid);
-        while (true) {
+        while (logged_in) {
             message.clear();
-            std::cin >> message;
-
+            getline(std::cin, message);
             if (message == "!list") {
                 std::vector<std::string> user_list;
 
@@ -92,6 +93,10 @@ int main(int argc, char **argv) {
                 std::cout << "Connected users: ";
                 for (std::string &s : user_list) { std::cout << s << " "; }
                 std::cout << std::endl;
+            } else if (message == "!dc") {
+                lock l(&mutex);
+                client.disconnectMe(uid);
+                logged_in = false;
             } else {
                 msg.__set_text(message);
                 lock l(&mutex);

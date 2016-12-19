@@ -41,7 +41,7 @@ void *update(void *arg) {
             std::cout << cm.username << "] " << cm.text << std::endl;
         }
 
-        log_id += missed.size();t
+        log_id += missed.size();
     }
 }
 

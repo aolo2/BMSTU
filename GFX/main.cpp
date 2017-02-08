@@ -20,6 +20,10 @@
 
 #define CURSOR_SIZE 8
 
+struct Point {
+    double x, y;
+};
+
 GLFWimage image;
 GLFWcursor* cursor;
 unsigned char pixels[CURSOR_SIZE * CURSOR_SIZE * 4];
@@ -49,10 +53,13 @@ void set_cursor_color(int r, int g, int b, int a) {
     }
 }
 
-GLfloat px_to_screen(double src, int DIM) {
-    GLfloat res = (src - DIM / 2) / (DIM / 2);
+Point px_to_screen(Point src) {
+    Point screen;
     
-    return res;
+    screen.x = (src.x - WINDOW_WIDTH / 2) / (WINDOW_WIDTH / 2);
+    screen.y = (WINDOW_HEIGHT / 2 - src.y ) / (WINDOW_HEIGHT / 2);
+    
+    return screen;
 }
 
 int make_shaders(const char* vs_src, const char* fs_src, GLuint* shaderProgram) {
@@ -223,9 +230,11 @@ int main() {
 }
 
 bool lmb_pressed, rmb_pressed;
+Point scrspccrd;
 void cursor_pos_callback(GLFWwindow* window, double l_xpos, double l_ypos) {
     if (lmb_pressed) {
-        printf("%.2f %.2f\n", px_to_screen(l_xpos, WINDOW_WIDTH), px_to_screen(l_ypos, WINDOW_HEIGHT));
+        scrspccrd = px_to_screen({l_xpos, l_ypos});
+        printf("%.2f %.2f\n", scrspccrd.x, scrspccrd.y);
     }
 }
 

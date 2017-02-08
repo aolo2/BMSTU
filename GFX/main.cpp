@@ -21,24 +21,15 @@
 #define CURSOR_SIZE 8
 
 struct Point {
-    double x, y;
+    float x, y;
 };
+
+glm::mat4 trans, last_trans;
+glm::vec3 color;
 
 GLFWimage image;
 GLFWcursor* cursor;
 unsigned char pixels[CURSOR_SIZE * CURSOR_SIZE * 4];
-
-const char* VERTEX_SHADER_SRC = "#version 430\n"
-                                "in vec3 inPos;"
-                                "void main() {"
-                                "  gl_Position = vec4(inPos, 1.0);"
-                                "}";
-                                
-const char* FRAGMENT_SHADER_SRC = "#version 430\n"
-                                  "out vec4 outColor;"
-                                  "void main() {"
-                                  "  outColor = vec4(1.0, 0.5, 0.0, 1.0);"
-                                  "}";                                
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
@@ -153,13 +144,19 @@ int main() {
     cursor = glfwCreateCursor(&image, 0, 0);
     glfwSetCursor(window, cursor);
     
+    Point s1, s2, s3, s4;
+    s1 = {0, 0};
+    s2 = px_to_screen({408, 300});
+    s3 = px_to_screen({400, 292});
+    s4 = px_to_screen({408, 292});
+    
 
     // tmp vertices
     GLfloat vertices[] = {
-         0.5f,  0.5f, 0.0f,  // Top Right
-         0.5f, -0.5f, 0.0f,  // Bottom Right
-        -0.5f, -0.5f, 0.0f,  // Bottom Left
-        -0.5f,  0.5f, 0.0f   // Top Left 
+        s2.x, s2.y, 0.0f,  // Top Right
+        s4.x, s4.y, 0.0f,  // Bottom Right
+        s3.x, s3.y, 0.0f,  // Bottom Left
+        s1.x, s1.y, 0.0f   // Top Left 
     };
     
     
@@ -208,13 +205,28 @@ int main() {
         return 1;
     }
     
+    GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
+    GLuint revertLoc = glGetUniformLocation(shaderProgram, "revert");
+    GLuint colorLoc = glGetUniformLocation(shaderProgram, "color");
+    
     glClearColor(0.15f, 0.15f, 0.16f, 1.0f);
+    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    bool ab = true;
     
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+    
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+        glUniformMatrix4fv(revertLoc, 1, GL_FALSE, glm::value_ptr(last_trans));
+        glUniform3fv(colorLoc, 1, glm::value_ptr(color));
+    
+        if (ab) {
+            glClear(GL_COLOR_BUFFER_BIT);
+            ab = false;
+        }
+    
         /* ===========DRAW HERE============= */
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
@@ -231,10 +243,19 @@ int main() {
 
 bool lmb_pressed, rmb_pressed;
 Point scrspccrd;
+
+double mx, my;
+
+
 void cursor_pos_callback(GLFWwindow* window, double l_xpos, double l_ypos) {
+    scrspccrd = px_to_screen({l_xpos, l_ypos});
+    // printf("%.2f %.2f\n", scrspccrd.x, scrspccrd.y);
+    
+    mx = scrspccrd.x, my = scrspccrd.y;
+    
     if (lmb_pressed) {
-        scrspccrd = px_to_screen({l_xpos, l_ypos});
-        printf("%.2f %.2f\n", scrspccrd.x, scrspccrd.y);
+        last_trans = glm::inverse(trans);
+        trans = glm::translate(trans, glm::vec3(mx, my, 0.0));
     }
 }
 
@@ -242,7 +263,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     if (action == GLFW_PRESS) {
         if (button == GLFW_MOUSE_BUTTON_LEFT) { 
             lmb_pressed = true; 
-            // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            last_trans = glm::inverse(trans);
+            trans = glm::translate(trans, glm::vec3(mx, my, 0.0));
         }
         
         if (button == GLFW_MOUSE_BUTTON_RIGHT) { rmb_pressed = true; }
@@ -263,15 +285,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 break;
             case GLFW_KEY_1:
                 set_cursor_color(255, 0, 0, 255);
+                color = {255, 0, 0};
                 break;
             case GLFW_KEY_2:
                 set_cursor_color(0, 255, 0, 255);
+                color = {0, 255, 0};
                 break;
             case GLFW_KEY_3:
                 set_cursor_color(0, 0, 255, 255);
+                color = {0, 0, 255};
                 break;
             case GLFW_KEY_0:
-                set_cursor_color(0, 0, 0, 255);
+                set_cursor_color(255, 255, 255, 255);
+                color = {255, 255, 255};
+                break;
+            case GLFW_KEY_SPACE:
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 break;
             default:
                 std::cout << key << std::endl;

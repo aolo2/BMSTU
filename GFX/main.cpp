@@ -1,5 +1,8 @@
 #define GLEW_STATIC
 
+#include <string>
+#include <fstream>
+#include <streambuf>
 #include <iostream> 
 #include <vector>
 #include <GL/glew.h>
@@ -13,28 +16,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #define WINDOW_WIDTH 800
-#define WINDOW_HEIGTH 600
+#define WINDOW_HEIGHT 600
 
 #define CURSOR_SIZE 8
-#define TOP_R_X 0
-#define TOP_R_Y 1
-#define BOT_R_X 3
-#define BOT_R_Y 4
-#define BOT_L_X 6
-#define BOT_L_Y 7
-#define TOP_L_X 9
-#define TOP_L_Y 10
 
 GLFWimage image;
 GLFWcursor* cursor;
 unsigned char pixels[CURSOR_SIZE * CURSOR_SIZE * 4];
-
-GLfloat vertices[] = {
-     0.5f,  0.5f, 0.0f,  // Top Right
-     0.5f, -0.5f, 0.0f,  // Bottom Right
-    -0.5f, -0.5f, 0.0f,  // Bottom Left
-    -0.5f,  0.5f, 0.0f   // Top Left 
-};
 
 const char* VERTEX_SHADER_SRC = "#version 430\n"
                                 "in vec3 inPos;"
@@ -59,6 +47,12 @@ void set_cursor_color(int r, int g, int b, int a) {
         pixels[i + 2] = b;
         pixels[i + 3] = a;
     }
+}
+
+GLfloat px_to_screen(double src, int DIM) {
+    GLfloat res = (src - DIM / 2) / (DIM / 2);
+    
+    return res;
 }
 
 int make_shaders(const char* vs_src, const char* fs_src, GLuint* shaderProgram) {
@@ -113,7 +107,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
         
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGTH, "OpenGL Test", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Test", nullptr, nullptr);
     if (window == nullptr) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -154,6 +148,13 @@ int main() {
     
 
     // tmp vertices
+    GLfloat vertices[] = {
+         0.5f,  0.5f, 0.0f,  // Top Right
+         0.5f, -0.5f, 0.0f,  // Bottom Right
+        -0.5f, -0.5f, 0.0f,  // Bottom Left
+        -0.5f,  0.5f, 0.0f   // Top Left 
+    };
+    
     
     GLuint indices[] = {  // Note that we start from 0!
         0, 1, 3,   // First Triangle
@@ -182,22 +183,30 @@ int main() {
 
     
     GLuint shaderProgram = glCreateProgram();
+    
+    std::ifstream t1("default.frag");
+    std::string f_src((std::istreambuf_iterator<char>(t1)),
+                     std::istreambuf_iterator<char>());
+
+    std::ifstream t2("default.vert");
+    std::string v_src((std::istreambuf_iterator<char>(t2)),
+                     std::istreambuf_iterator<char>());
+
+                     
+    const char* VERTEX_SHADER_SRC = v_src.c_str();
+    const char* FRAGMENT_SHADER_SRC = f_src.c_str();
+    
     if (make_shaders(VERTEX_SHADER_SRC, FRAGMENT_SHADER_SRC, &shaderProgram) != 0) {
         std::cerr << "Could not finish shader setup, exiting" << std::endl;
         return 1;
     }
     
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    
-    long frameNumber = 0;
+    glClearColor(0.15f, 0.15f, 0.16f, 1.0f);
     
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-
-        if (frameNumber++ < 2) {
-            glClear(GL_COLOR_BUFFER_BIT);
-        }
-
+        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         /* ===========DRAW HERE============= */
         glUseProgram(shaderProgram);
@@ -216,7 +225,7 @@ int main() {
 bool lmb_pressed, rmb_pressed;
 void cursor_pos_callback(GLFWwindow* window, double l_xpos, double l_ypos) {
     if (lmb_pressed) {
-        std::cout << l_xpos << " " << l_ypos << std::endl;
+        printf("%.2f %.2f\n", px_to_screen(l_xpos, WINDOW_WIDTH), px_to_screen(l_ypos, WINDOW_HEIGHT));
     }
 }
 
@@ -254,9 +263,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 break;
             case GLFW_KEY_0:
                 set_cursor_color(0, 0, 0, 255);
-                break;
-            case GLFW_KEY_SPACE:
-                glClear(GL_COLOR_BUFFER_BIT);
                 break;
             default:
                 std::cout << key << std::endl;

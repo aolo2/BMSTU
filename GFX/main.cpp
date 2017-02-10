@@ -136,7 +136,7 @@ int main() {
   
     // tell GL to only draw onto a pixel if the shape is closer to the viewer
     glEnable(GL_DEPTH_TEST); // enable depth-testing
-    glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+    glDepthFunc(GL_LEQUAL); // depth-testing interprets a smaller value as "closer"
     
     glfwSetKeyCallback(window, key_callback);  
     glfwSetCursorPosCallback(window, cursor_pos_callback);

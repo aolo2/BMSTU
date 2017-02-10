@@ -4,5 +4,5 @@ out vec4 outColor;
 uniform vec4 color;
 
 void main() {
-    outColor = color;
+    outColor = vec4(color.x / 255, color.y / 255, color.z / 255, 1.0f);
 }

@@ -16,8 +16,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 
 #define CURSOR_SIZE 8
 
@@ -144,7 +144,7 @@ int main() {
     // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     
-    set_cursor_color(0, 0, 0, 255);
+    set_cursor_color(184, 58, 4, 255);
     image.width = CURSOR_SIZE;
     image.height = CURSOR_SIZE;
     image.pixels = pixels;
@@ -213,9 +213,9 @@ int main() {
     }
     
     
-    glClearColor(0.15f, 0.15f, 0.16f, 1.0f);
+    std::cout << "Use your mouse to draw!\nESC - exit\n0-9 - change color\n";
     
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.85f, 0.85f, 0.86f, 1.0f);
     
     bool ab = true;
     glm::mat4 last;
@@ -234,7 +234,7 @@ int main() {
         glm::vec4 col;
         for (int i = 0; i < copies.size(); i++) {
             loc = copies[i];
-            col = colors[i];
+            col = colors[i]; // not index, key!
             
             GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
             glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(loc));
@@ -248,8 +248,6 @@ int main() {
         /* ================================= */
                 
         glBindVertexArray(0);
-        
-        
         glfwSwapBuffers(window);
     }
     
@@ -302,16 +300,34 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 glfwSetWindowShouldClose(window, GL_TRUE);
                 break;
             case GLFW_KEY_1:
-                set_cursor_color(255, 0, 0, 255);
+                set_cursor_color(94, 65, 47, 255);
                 break;
             case GLFW_KEY_2:
-                set_cursor_color(0, 255, 0, 255);
+                set_cursor_color(96, 144, 147, 255);
                 break;
             case GLFW_KEY_3:
-                set_cursor_color(0, 0, 255, 255);
+                set_cursor_color(239, 119, 24, 255);
+                break;
+            case GLFW_KEY_4:
+                set_cursor_color(129, 0, 0, 255);
+                break;
+            case GLFW_KEY_5:
+                set_cursor_color(184, 58, 4, 255);
+                break;
+            case GLFW_KEY_6:
+                set_cursor_color(251, 234, 181, 255);
+                break;
+            case GLFW_KEY_7:
+                set_cursor_color(171, 26, 0, 255);
+                break;
+            case GLFW_KEY_8:
+                set_cursor_color(119, 191, 167, 255);
+                break;
+            case GLFW_KEY_9:
+                set_cursor_color(129, 0, 0, 255);
                 break;
             case GLFW_KEY_0:
-                set_cursor_color(255, 255, 255, 255);
+                set_cursor_color(109, 17, 0, 255);
                 break;
             case GLFW_KEY_SPACE:
                 copies.clear();                
@@ -326,3 +342,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetCursor(window, cursor);
     }
 }    
+
+//0.72f, 0.23f, 0.015f, 1.0f
+//0.67f, 0.102f, 0.0f, 1.0f
+//0.506f, 0.0f, 0.0f, 1.0f
+//0.427f, 0.067f, 0.0f, 1.0f

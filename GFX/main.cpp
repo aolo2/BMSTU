@@ -15,14 +15,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1280
+#define WINDOW_HEIGHT 720
 
 #define CURSOR_SIZE 8
 
 struct Point {
     float x, y;
 };
+
+std::vector<glm::mat4> copies;
 
 glm::mat4 trans, last_trans;
 glm::vec3 color;
@@ -146,9 +148,9 @@ int main() {
     
     Point s1, s2, s3, s4;
     s1 = {0, 0};
-    s2 = px_to_screen({408, 300});
-    s3 = px_to_screen({400, 292});
-    s4 = px_to_screen({408, 292});
+    s2 = px_to_screen({WINDOW_WIDTH / 2 + CURSOR_SIZE, WINDOW_HEIGHT / 2});
+    s3 = px_to_screen({WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - CURSOR_SIZE});
+    s4 = px_to_screen({WINDOW_WIDTH / 2 + CURSOR_SIZE, WINDOW_HEIGHT / 2 - CURSOR_SIZE});
     
 
     // tmp vertices
@@ -205,35 +207,37 @@ int main() {
         return 1;
     }
     
-    GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
-    GLuint revertLoc = glGetUniformLocation(shaderProgram, "revert");
-    GLuint colorLoc = glGetUniformLocation(shaderProgram, "color");
     
     glClearColor(0.15f, 0.15f, 0.16f, 1.0f);
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     bool ab = true;
+    glm::mat4 last;
     
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
     
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-        glUniformMatrix4fv(revertLoc, 1, GL_FALSE, glm::value_ptr(last_trans));
-        glUniform3fv(colorLoc, 1, glm::value_ptr(color));
-    
-        if (ab) {
-            glClear(GL_COLOR_BUFFER_BIT);
-            ab = false;
-        }
+        // GLuint colorLoc = glGetUniformLocation(shaderProgram, "color");
+        // glUniform3fv(colorLoc, 1, glm::value_ptr(color));
     
         /* ===========DRAW HERE============= */
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        for (const glm::mat4& loc : copies) {
+            GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
+            glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(loc));
+
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        }
         /* ================================= */
                 
+        glBindVertexArray(0);
+        
+        
         glfwSwapBuffers(window);
     }
     
@@ -248,23 +252,23 @@ double mx, my;
 
 
 void cursor_pos_callback(GLFWwindow* window, double l_xpos, double l_ypos) {
-    scrspccrd = px_to_screen({l_xpos, l_ypos});
+    scrspccrd = px_to_screen({(float) l_xpos, (float) l_ypos + CURSOR_SIZE});
     // printf("%.2f %.2f\n", scrspccrd.x, scrspccrd.y);
     
     mx = scrspccrd.x, my = scrspccrd.y;
     
     if (lmb_pressed) {
-        last_trans = glm::inverse(trans);
-        trans = glm::translate(trans, glm::vec3(mx, my, 0.0));
+        trans = glm::translate(glm::mat4(), glm::vec3(mx, my, 0.0));
+        copies.push_back(trans);
     }
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (action == GLFW_PRESS) {
         if (button == GLFW_MOUSE_BUTTON_LEFT) { 
-            lmb_pressed = true; 
-            last_trans = glm::inverse(trans);
-            trans = glm::translate(trans, glm::vec3(mx, my, 0.0));
+            lmb_pressed = true;
+            trans = glm::translate(glm::mat4(), glm::vec3(mx, my, 0.0));
+            copies.push_back(trans);
         }
         
         if (button == GLFW_MOUSE_BUTTON_RIGHT) { rmb_pressed = true; }
@@ -300,7 +304,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 color = {255, 255, 255};
                 break;
             case GLFW_KEY_SPACE:
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                copies.clear();                
                 break;
             default:
                 std::cout << key << std::endl;

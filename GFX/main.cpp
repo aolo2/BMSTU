@@ -5,6 +5,7 @@
 #include <streambuf>
 #include <iostream> 
 #include <vector>
+#include <map>
 #include <GL/glew.h>
 
 // GLFW (mouse and keyboard events, windows)
@@ -24,10 +25,12 @@ struct Point {
     float x, y;
 };
 
+
 std::vector<glm::mat4> copies;
+std::map<int, glm::vec4> colors;
 
 glm::mat4 trans, last_trans;
-glm::vec3 color;
+glm::vec4 current_color;
 
 GLFWimage image;
 GLFWcursor* cursor;
@@ -44,6 +47,8 @@ void set_cursor_color(int r, int g, int b, int a) {
         pixels[i + 2] = b;
         pixels[i + 3] = a;
     }
+    
+    current_color = glm::vec4(r, g, b, a);
 }
 
 Point px_to_screen(Point src) {
@@ -218,17 +223,24 @@ int main() {
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
     
-        // GLuint colorLoc = glGetUniformLocation(shaderProgram, "color");
-        // glUniform3fv(colorLoc, 1, glm::value_ptr(color));
+        
     
         /* ===========DRAW HERE============= */
         glUseProgram(shaderProgram);
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        for (const glm::mat4& loc : copies) {
+        glm::mat4 loc;
+        glm::vec4 col;
+        for (int i = 0; i < copies.size(); i++) {
+            loc = copies[i];
+            col = colors[i];
+            
             GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
             glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(loc));
+            
+            GLuint colorLoc = glGetUniformLocation(shaderProgram, "color");
+            glUniform4fv(colorLoc, 1, glm::value_ptr(col));
 
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -260,6 +272,7 @@ void cursor_pos_callback(GLFWwindow* window, double l_xpos, double l_ypos) {
     if (lmb_pressed) {
         trans = glm::translate(glm::mat4(), glm::vec3(mx, my, 0.0));
         copies.push_back(trans);
+        colors[copies.size() - 1] = current_color;
     }
 }
 
@@ -269,6 +282,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             lmb_pressed = true;
             trans = glm::translate(glm::mat4(), glm::vec3(mx, my, 0.0));
             copies.push_back(trans);
+            colors[copies.size() - 1] = current_color;
         }
         
         if (button == GLFW_MOUSE_BUTTON_RIGHT) { rmb_pressed = true; }
@@ -289,22 +303,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 break;
             case GLFW_KEY_1:
                 set_cursor_color(255, 0, 0, 255);
-                color = {255, 0, 0};
                 break;
             case GLFW_KEY_2:
                 set_cursor_color(0, 255, 0, 255);
-                color = {0, 255, 0};
                 break;
             case GLFW_KEY_3:
                 set_cursor_color(0, 0, 255, 255);
-                color = {0, 0, 255};
                 break;
             case GLFW_KEY_0:
                 set_cursor_color(255, 255, 255, 255);
-                color = {255, 255, 255};
                 break;
             case GLFW_KEY_SPACE:
                 copies.clear();                
+                colors.clear();
                 break;
             default:
                 std::cout << key << std::endl;

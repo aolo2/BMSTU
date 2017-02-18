@@ -5,31 +5,69 @@ out vec4 color;
 in vec3 normalVec;
 in vec3 fragPos;
 
-uniform vec3 objectColor;
-uniform vec3 lightColor;
-uniform vec3 lightPos;
+struct DirLight {
+    vec3 direction, ambient, diffuse, specular, color;
+};  
+
+struct PointLight {    
+    vec3 position, ambient, diffuse, specular, color;
+    vec3 k0k1k2;
+};  
+
+struct ConeLight {
+    vec3 color, direction, k0k1k2;
+    float hardAngle, softAngle, diffuse;
+};
+
+uniform DirLight dirLight;
+uniform PointLight pointLight;
+uniform ConeLight coneLight;
 uniform vec3 camPos;
 
-void main() {
-    float ambient = 0.03f;
-    float specularStrength = 0.5f;
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir) {
+    vec3 lightDir = normalize(-light.direction);
+    vec3 reflectDir = reflect(-lightDir, normal);
     
-    vec3 ambientLight = lightColor * ambient;
-    vec3 norm = normalize(normalVec);
-    vec3 lightDir = normalize(lightPos - fragPos);  
+    float diff = max(dot(normal, lightDir), 0.0f);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
     
-    vec3 viewDir = normalize(camPos - fragPos);
-    vec3 reflectDir = normalize(reflect(-lightDir, norm));
-    
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * lightColor;  
-    
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
-    
-    float d= distance(lightPos, fragPos);
-    float k0 = 0.0f, k1 = 0.2f, k2 = 0.8f;
-    float distLight = 1 / (k0 * d * d + k1 * d + k2);
-    
-    color = vec4(objectColor * distLight * (ambientLight + diffuse + specular), 1.0f);
+    return light.ambient + (light.diffuse * diff); //(light.specular * spec);
 }
+
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    
+    float diff = max(dot(normal, lightDir), 0.0f);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 32);
+    
+    return light.ambient + (light.diffuse * diff) + (light.specular * spec);
+}
+
+vec3 CalcConeLight(ConeLight light, vec3 viewDir) {
+    float cosine = dot(viewDir, normalize(-coneLight.direction));
+    
+    if (cosine > light.softAngle) {
+        float epsilon = light.hardAngle - light.softAngle;
+        float intensity = clamp((cosine - light.softAngle) / epsilon, 0.0f, 1.0f);
+        float d = length(camPos - fragPos);
+        float distScale = 1.0f / (light.k0k1k2.x + light.k0k1k2.y * d + light.k0k1k2.z * d * d);
+        
+        return light.color * light.diffuse * intensity * distScale;
+    } else {
+        return vec3(0.0f);
+    }
+}
+
+void main() {
+    vec3 resColor, lighting;
+    vec3 objectColor = vec3(1.0f, 0.5f, 0.0f);
+    vec3 viewDir = normalize(camPos - fragPos);
+
+    lighting = CalcDirLight(dirLight, normalVec, viewDir);
+    lighting += CalcPointLight(pointLight, normalVec, fragPos, viewDir);
+    lighting += CalcConeLight(coneLight, viewDir);
+        
+    color = vec4(lighting * objectColor, 1.0f);
+}
+

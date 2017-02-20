@@ -1,9 +1,12 @@
 #include "Camera.h"
 #include <GLFW/glfw3.h>
 
-Camera::Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up) {
+Camera::Camera(glm::vec3 pos, glm::vec3 up) {
     this->pos = pos;
     this->worldUp = normalize(up);
+    
+    this->pitch = PITCH;
+    this->yaw = YAW;
     
     this->updateAngles();
 }

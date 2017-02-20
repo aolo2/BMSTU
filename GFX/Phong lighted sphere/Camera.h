@@ -8,13 +8,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 const GLfloat YAW = -90.0f;
-const GLfloat PITCH = 0.0f;
+const GLfloat PITCH = -45.0f;
 const GLfloat SPEED = 0.05f;
 const GLfloat SENSITIVITY = 0.1f;
 
 class Camera {
 public:
-    Camera(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
+    Camera(glm::vec3 pos, glm::vec3 up);
     glm::mat4 viewMatrix();
     glm::vec3 getPosition();
     glm::vec3 getFront();

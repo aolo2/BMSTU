@@ -1,7 +1,7 @@
 #include "Trans.h"
 
 bool keys[1024];
-glm::vec2 cdv(0.05f, 0.05f);
+glm::vec2 cdv;
 
 void set_cdv(glm::vec2 source) {
     cdv = source;
@@ -19,6 +19,9 @@ glm::vec3 calc_translation() {
 
     if (keys[GLFW_KEY_D]) new_pos += glm::vec3(0.1f, 0.0f, 0.0f);
     if (keys[GLFW_KEY_A]) new_pos -= glm::vec3(0.1f, 0.0f, 0.0f);
+
+    if (keys[GLFW_KEY_Q]) new_pos += glm::vec3(0.0f, 0.0f, 0.1f);
+    if (keys[GLFW_KEY_E]) new_pos -= glm::vec3(0.0f, 0.0f, 0.1f);
 
     return new_pos;
 }

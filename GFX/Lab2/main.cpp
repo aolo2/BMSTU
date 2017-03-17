@@ -19,6 +19,7 @@ void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
+glm::mat4 horizontalIsometry();
 glm::vec2 pixel_to_window(glm::vec2 src);
 void clear(std::queue<glm::vec2> &q);
 void cursor_vec(double xpos, double ypos);
@@ -59,14 +60,13 @@ int main() {
 
     Shader defaultShader("GLSL/default.vert", "GLSL/default.frag");
 
-    glm::mat4 demo_model, model, view, proj;
+    glm::mat4 demo_model, view, model, proj;
     glm::mat3 inv_model;
-    
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
-    proj = glm::perspective(45.0f, (GLfloat) WINDOW_WIDTH / (GLfloat) WINDOW_HEIGHT, 0.1f, 100.0f);
 
-    glm::vec3 demo_pos(-1.2f, -0.6f, 0.5f), position, rotate_vec(0.0f, 1.0f, 0.0f);
-    float demo_scale = 0.2f, scale, rotate_angle = 1.0f;
+    proj = horizontalIsometry();
+
+    glm::vec3 demo_pos(-1.0f, -0.3f, 0.0f), position, rotate_vec(0.0f, 1.0f, 0.0f);
+    float demo_scale = 0.3f, scale, rotate_angle = 1.0f;
     double cursor_x, cursor_y;
 
     demo_model = glm::translate(demo_model, demo_pos);
@@ -122,7 +122,6 @@ int main() {
         cull ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 
         defaultShader.setUniform("model", model);
-        defaultShader.setUniform("view", view);
         defaultShader.setUniform("proj", proj);
 
         glBindVertexArray(VAO);
@@ -136,6 +135,16 @@ int main() {
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
+}
+
+glm::mat4 horizontalIsometry() {
+    glm::mat4 T1, T2, T3;
+
+    T1[2][2] = 0.0f;
+    T2 = glm::rotate(T2, glm::radians(35.26f), glm::vec3(1.0f, 0.0f, 0.0f));
+    T3 = glm::rotate(T3, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    return T1 * T2 * T3;
 }
 
 glm::vec2 pixel_to_window(double x, double y) {

@@ -14,14 +14,14 @@ void set_key(int key, bool value) {
 glm::vec3 calc_translation() {
     glm::vec3 new_pos;
 
-    if (keys[GLFW_KEY_W]) new_pos += glm::vec3(0.0f, 0.1f, 0.0f);
-    if (keys[GLFW_KEY_S]) new_pos -= glm::vec3(0.0f, 0.1f, 0.0f);
+    if (keys[GLFW_KEY_W]) new_pos += glm::vec3(0.0f, 0.01f, 0.0f);
+    if (keys[GLFW_KEY_S]) new_pos -= glm::vec3(0.0f, 0.01f, 0.0f);
 
-    if (keys[GLFW_KEY_D]) new_pos += glm::vec3(0.1f, 0.0f, 0.0f);
-    if (keys[GLFW_KEY_A]) new_pos -= glm::vec3(0.1f, 0.0f, 0.0f);
+    if (keys[GLFW_KEY_D]) new_pos += glm::vec3(0.01f, 0.0f, 0.0f);
+    if (keys[GLFW_KEY_A]) new_pos -= glm::vec3(0.01f, 0.0f, 0.0f);
 
-    if (keys[GLFW_KEY_Q]) new_pos += glm::vec3(0.0f, 0.0f, 0.1f);
-    if (keys[GLFW_KEY_E]) new_pos -= glm::vec3(0.0f, 0.0f, 0.1f);
+    if (keys[GLFW_KEY_Q]) new_pos += glm::vec3(0.0f, 0.0f, 0.01f);
+    if (keys[GLFW_KEY_E]) new_pos -= glm::vec3(0.0f, 0.0f, 0.01f);
 
     return new_pos;
 }

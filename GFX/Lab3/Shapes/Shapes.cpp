@@ -69,37 +69,35 @@ GLfloat *gen_surface(unsigned int slices) {
     std::vector<glm::vec2> broken_line;   // (x, y)
     std::vector<GLfloat> surface;
 
-    broken_line.emplace_back(0.2f, -1.0f);
-    broken_line.emplace_back(0.3f, -0.8f);
-    broken_line.emplace_back(0.5f, -0.6f);
-    broken_line.emplace_back(0.3f, -0.4f);
-    broken_line.emplace_back(0.1f, -0.2f);
-    broken_line.emplace_back(0.6f, 0.0f);
-    broken_line.emplace_back(0.7f, 0.2f);
-    broken_line.emplace_back(0.6f, 0.4f);
-    broken_line.emplace_back(0.8f, 0.6f);
-    broken_line.emplace_back(0.5f, 0.8f);
-    broken_line.emplace_back(0.2f, 1.0f);
+    broken_line.emplace_back(0.5f, -0.5f);
+    broken_line.emplace_back(0.4f, -0.4f);
+    broken_line.emplace_back(0.3f, -0.3f);
+    broken_line.emplace_back(0.2f, -0.2f);
+    broken_line.emplace_back(0.1f, -0.1f);
+    broken_line.emplace_back(0.0f, 0.0f);
+    broken_line.emplace_back(0.1f, 0.1f);
+    broken_line.emplace_back(0.2f, -0.2f);
+    broken_line.emplace_back(0.3f, 0.3f);
+    broken_line.emplace_back(0.4f, -0.4f);
+    broken_line.emplace_back(0.5f, 0.5f);
 
     float phi;    // rotating around 'Oy'
-    for (int j = 0; j < broken_line.size() - 2; j++) {
+    for (int j = 0; j < broken_line.size() - 1; j++) {
 
         glm::vec2 v = broken_line[j];
         glm::vec2 v_above = broken_line[j + 1];
 
         for (unsigned int i = 0; i <= slices; i++) {
             phi = 2 * (float) PI / slices * i;
-            surface.push_back(v.x * sin(phi));
-            surface.push_back(v.y);
             surface.push_back(v.x * cos(phi));
+            surface.push_back(v.y);
+            surface.push_back(v.x * sin(phi));
 
-            surface.push_back(v_above.x * sin(phi));
-            surface.push_back(v_above.y);
             surface.push_back(v_above.x * cos(phi));
+            surface.push_back(v_above.y);
+            surface.push_back(v_above.x * sin(phi));
         }
     }
-
-
 
     GLfloat *data = new GLfloat[surface.size()];
     std::copy(surface.begin(), surface.end(), data);

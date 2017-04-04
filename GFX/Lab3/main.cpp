@@ -134,7 +134,7 @@ int main() {
         defaultShader.setUniform("proj", proj);
 
         glBindVertexArray(VAO[1]);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 10 * (slices + 1));
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 20 * (slices + 1));
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
@@ -176,24 +176,15 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         if (key == GLFW_KEY_ESCAPE) glfwSetWindowShouldClose(window, GL_TRUE);
         if (key == GLFW_KEY_SPACE) wireframe = !wireframe;
 
-        if (key == GLFW_KEY_UP) {
-            slices++;
+        if (key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) {
+
             delete[] surface;
 
-            surface = gen_surface(slices);
-
-            glBindVertexArray(VAO[1]);
-            glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-            glBufferData(GL_ARRAY_BUFFER, (slices + 1) * 10 * 6 * sizeof(GLfloat), surface, GL_STATIC_DRAW);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *) 0);
-            glEnableVertexAttribArray(0);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindVertexArray(0);
-        }
-
-        if (key == GLFW_KEY_DOWN && slices >= 4) {
-            slices--;
-            delete[] surface;
+            if (key == GLFW_KEY_UP) {
+                slices++;
+            } else if (slices > 3) {
+                slices--;
+            }
 
             surface = gen_surface(slices);
 

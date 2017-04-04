@@ -2,8 +2,8 @@
 #include "Shapes/Shapes.h"
 #include "Trans/Trans.h"
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+int WINDOW_WIDTH = 1280;
+int WINDOW_HEIGHT = 720;
 
 #include <queue>
 
@@ -15,12 +15,15 @@ bool wireframe, lmb;
 
 GLfloat *surface;
 GLuint VAO[2], VBO[2];
+glm::mat4 ortho = glm::ortho((float) WINDOW_WIDTH / (float) WINDOW_HEIGHT * -1.0f,
+    (float) WINDOW_WIDTH / (float) WINDOW_HEIGHT, -1.0f, 1.0f, -1.0f, 1.0f);
 std::queue<glm::vec2> cursor_positions;
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 glm::mat4 horizontalIsometry();
 glm::vec2 pixel_to_window(glm::vec2 src);
@@ -32,7 +35,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Lab 3", nullptr, nullptr);
 
@@ -46,6 +49,7 @@ int main() {
     glfwSetKeyCallback(window, key_callback);
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     surface = gen_surface(slices);
     GLfloat *cube = gen_cube();
@@ -75,7 +79,7 @@ int main() {
     glm::mat4 demo_model, view, model, proj;
     glm::mat3 inv_model;
 
-    proj = horizontalIsometry();
+    glm::mat4 customProjMatrix = horizontalIsometry();
 
     glm::vec3 demo_pos(-0.4f, -0.4f, 0.5f), position, rotate_vec(0.0f, 1.0f, 0.0f);
     float demo_scale = 0.2f, scale, rotate_angle = 1.0f;
@@ -90,6 +94,8 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        proj = customProjMatrix * ortho;
+
         defaultShader.useProgram();
 
 
@@ -101,7 +107,6 @@ int main() {
         glBindVertexArray(VAO[0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
-
 
         if (lmb) {
             glfwGetCursorPos(window, &cursor_x, &cursor_y);
@@ -201,6 +206,14 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (action == GLFW_RELEASE) {
         set_key(key, false);
     }
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+    WINDOW_WIDTH = width;
+    WINDOW_HEIGHT = height;
+    float ratio = (float) width / (float) height;
+    ortho = glm::ortho(-ratio, ratio, -1.0f, 1.0f, -1.0f, 1.0f);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {

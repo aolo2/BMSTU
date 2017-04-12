@@ -32,7 +32,7 @@ void cursor_vec(double xpos, double ypos);
 
 int main() {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -81,8 +81,8 @@ int main() {
 
     glm::mat4 customProjMatrix = horizontalIsometry();
 
-    glm::vec3 demo_pos(-0.4f, -0.4f, 0.5f), position, rotate_vec(0.0f, 1.0f, 0.0f);
-    float demo_scale = 0.2f, scale, rotate_angle = 1.0f;
+    glm::vec3 demo_pos(-1.1f, -0.5f, 0.3f), position, rotate_vec(0.0f, 1.0f, 0.0f);
+    float demo_scale = 0.4f, scale, rotate_angle = 1.0f;
     double cursor_x, cursor_y;
 
     demo_model = glm::translate(demo_model, demo_pos);
@@ -94,13 +94,13 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        proj = customProjMatrix * ortho;
+        proj = ortho * customProjMatrix;
 
         defaultShader.useProgram();
 
 
         // Projection demo cube
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         defaultShader.setUniform("model", demo_model);
 
@@ -148,6 +148,8 @@ int main() {
     delete[] surface;
     delete[] cube;
 
+    glDeleteBuffers(2, VBO);
+    glDeleteVertexArrays(2, VAO);
     glfwDestroyWindow(window);
     glfwTerminate();
 
@@ -155,13 +157,12 @@ int main() {
 }
 
 glm::mat4 horizontalIsometry() {
-    glm::mat4 T1, T2, T3;
+    glm::mat4 T2;
 
-    T1[2][2] = -1.0f;
-    T2[2][0] = -1.0f * sqrt(2) / 2;
-    T3[2][1] = -1.0f * sqrt(2) / 2;
+    T2[2][0] = sqrt(2) / -2.0f;
+    T2[2][1] = sqrt(2) / -2.0f;
 
-    return T1 * T2 * T3;
+    return T2;
 }
 
 glm::vec2 pixel_to_window(double x, double y) {
@@ -210,8 +211,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
-    WINDOW_WIDTH = width;
-    WINDOW_HEIGHT = height;
     float ratio = (float) width / (float) height;
     ortho = glm::ortho(-ratio, ratio, -1.0f, 1.0f, -1.0f, 1.0f);
 }

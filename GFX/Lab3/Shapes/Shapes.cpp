@@ -69,17 +69,17 @@ GLfloat *gen_surface(unsigned int slices) {
     std::vector<glm::vec2> broken_line;   // (x, y)
     std::vector<GLfloat> surface;
 
-    broken_line.emplace_back(0.5f, -0.5f);
+    broken_line.emplace_back(0.2f, -0.8f);
+    broken_line.emplace_back(0.3f, -0.6f);
     broken_line.emplace_back(0.4f, -0.4f);
-    broken_line.emplace_back(0.3f, -0.3f);
-    broken_line.emplace_back(0.2f, -0.2f);
-    broken_line.emplace_back(0.1f, -0.1f);
-    broken_line.emplace_back(0.0f, 0.0f);
-    broken_line.emplace_back(0.1f, 0.1f);
-    broken_line.emplace_back(0.2f, -0.2f);
-    broken_line.emplace_back(0.3f, 0.3f);
-    broken_line.emplace_back(0.4f, -0.4f);
-    broken_line.emplace_back(0.5f, 0.5f);
+    broken_line.emplace_back(0.3f, -0.2f);
+    broken_line.emplace_back(0.2f, 0.0f);
+    broken_line.emplace_back(0.3f, 0.2f);
+    broken_line.emplace_back(0.4f, 0.4f);
+    broken_line.emplace_back(0.3f, 0.6f);
+    broken_line.emplace_back(0.2f, 0.8f);
+    broken_line.emplace_back(0.3f, 1.0f);
+    broken_line.emplace_back(0.4f, 1.2f);
 
     float phi;    // rotating around 'Oy'
     for (int j = 0; j < broken_line.size() - 1; j++) {

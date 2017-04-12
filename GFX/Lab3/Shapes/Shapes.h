@@ -8,6 +8,7 @@
 #define PI 3.1415926535f
 
 // GLM (maths)
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

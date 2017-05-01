@@ -22,7 +22,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    // glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "PBR Demo", nullptr, nullptr);
 
@@ -33,7 +33,7 @@ int main() {
     glewInit();
 
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    // glEnable(GL_MULTISAMPLE);
+    glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
@@ -70,7 +70,7 @@ int main() {
 
     GLuint VAO, cubeVAO, quadVAO;
     glGenVertexArrays(1, &VAO);
-    glGenVertex(1, &cubeVAO);
+    glGenVertexArrays(1, &cubeVAO);
     glGenVertexArrays(1, &quadVAO);
 
     Object sphere(VAO, Shape::SPHERE);

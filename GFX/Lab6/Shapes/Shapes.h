@@ -22,6 +22,8 @@ enum Shape {
     SPIN_SURFACE,
 };
 
+float max_dist(const std::vector<glm::vec2> &line);
+
 std::vector<GLfloat> gen_cube();
 std::vector<GLfloat> gen_quad();
 std::vector<GLfloat> gen_surface(unsigned int slices, const std::vector<glm::vec2> &broken_line);

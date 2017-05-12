@@ -1,6 +1,19 @@
 #include "Shapes.h"
 #include <iostream>
 
+float max_dist(const std::vector<glm::vec2> &line) {
+    float max_dist = 0.0f;
+    
+    for (const auto &point : line) {
+        float dist = sqrt(point.x * point.x + point.y * point.y);
+        if (dist > max_dist) { 
+            max_dist = dist;
+        }
+    }
+    
+    return max_dist;
+}
+
 std::vector<GLfloat> gen_quad() {
     std::vector<GLfloat> v = 
     {
@@ -46,6 +59,9 @@ std::vector<GLfloat> gen_surface(unsigned int slices, const std::vector<glm::vec
             surface.push_back(norm3.y);
             surface.push_back(norm3.z);
             
+            surface.push_back(i / static_cast<float>(slices));
+            surface.push_back(j / static_cast<float>(broken_line.size() - 1));
+            
             surface.push_back(next_point.x);
             surface.push_back(next_point.y);
             surface.push_back(next_point.z);
@@ -53,29 +69,38 @@ std::vector<GLfloat> gen_surface(unsigned int slices, const std::vector<glm::vec
             surface.push_back(norm3.x);
             surface.push_back(norm3.y);
             surface.push_back(norm3.z);
+            
+            surface.push_back(i / static_cast<float>(slices) );
+            surface.push_back((j + 1) / static_cast<float>(broken_line.size()));
         }
     }
 
     for (int i = 0; i <= slices; i++) {
-        full_surface.push_back(surface[i * 12 + 0]);
-        full_surface.push_back(surface[i * 12 + 1]);
-        full_surface.push_back(surface[i * 12 + 2]);
-        
+        full_surface.push_back(surface[i * 16 + 0]);
+        full_surface.push_back(surface[i * 16 + 1]);
+        full_surface.push_back(surface[i * 16 + 2]);
+       
         full_surface.push_back(0.0f);
         full_surface.push_back(-1.0f);
         full_surface.push_back(0.0f);
+        
+        full_surface.push_back(surface[i * 16 + 0] / (broken_line[0].x * 8.0f)); // [-1, 1] -> [0, 1]
+        full_surface.push_back(surface[i * 16 + 2] / (broken_line[0].x * 8.0f)); // [-1, 1] -> [0, 1]
     }
     
     full_surface.insert(full_surface.end(), surface.begin(), surface.end());
     
     for (int i = 0; i <= slices; i++) {
-        full_surface.push_back(surface[surface.size() - 6 - i * 12]);
-        full_surface.push_back(surface[surface.size() - 5 - i * 12]);
-        full_surface.push_back(surface[surface.size() - 4 - i * 12]);
+        full_surface.push_back(surface[surface.size() - 8 - i * 16]);
+        full_surface.push_back(surface[surface.size() - 7 - i * 16]);
+        full_surface.push_back(surface[surface.size() - 6 - i * 16]);
         
         full_surface.push_back(0.0f);
         full_surface.push_back(1.0f);
         full_surface.push_back(0.0f);
+        
+        full_surface.push_back(surface[surface.size() - 8 - i * 16] / (broken_line.back().x * 8.0f)); // [-1, 1] -> [0, 1]
+        full_surface.push_back(surface[surface.size() - 6 - i * 16] / (broken_line.back().x * 8.0f));
     }
 
     return full_surface;
@@ -84,47 +109,47 @@ std::vector<GLfloat> gen_surface(unsigned int slices, const std::vector<glm::vec
 std::vector<GLfloat> gen_cube() {
     std::vector<GLfloat> v = 
     {
-         -1.0f, -1.0f, -1.0f,
-          1.0f, -1.0f, -1.0f,
-          1.0f,  1.0f, -1.0f,
-          1.0f,  1.0f, -1.0f,
-         -1.0f,  1.0f, -1.0f,
-         -1.0f, -1.0f, -1.0f,
+         -2.0f, -2.0f, -2.0f,
+          2.0f, -2.0f, -2.0f,
+          2.0f,  2.0f, -2.0f,
+          2.0f,  2.0f, -2.0f,
+         -2.0f,  2.0f, -2.0f,
+         -2.0f, -2.0f, -2.0f,
 
-         -1.0f, -1.0f,  1.0f,
-          1.0f, -1.0f,  1.0f,
-          1.0f,  1.0f,  1.0f,
-          1.0f,  1.0f,  1.0f,
-         -1.0f,  1.0f,  1.0f,
-         -1.0f, -1.0f,  1.0f,
+         -2.0f, -2.0f,  2.0f,
+          2.0f, -2.0f,  2.0f,
+          2.0f,  2.0f,  2.0f,
+          2.0f,  2.0f,  2.0f,
+         -2.0f,  2.0f,  2.0f,
+         -2.0f, -2.0f,  2.0f,
 
-         -1.0f,  1.0f,  1.0f,
-         -1.0f,  1.0f, -1.0f,
-         -1.0f, -1.0f, -1.0f,
-         -1.0f, -1.0f, -1.0f,
-         -1.0f, -1.0f,  1.0f,
-         -1.0f,  1.0f,  1.0f,
+         -2.0f,  2.0f,  2.0f,
+         -2.0f,  2.0f, -2.0f,
+         -2.0f, -2.0f, -2.0f,
+         -2.0f, -2.0f, -2.0f,
+         -2.0f, -2.0f,  2.0f,
+         -2.0f,  2.0f,  2.0f,
 
-          1.0f,  1.0f,  1.0f,
-          1.0f,  1.0f, -1.0f,
-          1.0f, -1.0f, -1.0f,
-          1.0f, -1.0f, -1.0f,
-          1.0f, -1.0f,  1.0f,
-          1.0f,  1.0f,  1.0f,
+          2.0f,  2.0f,  2.0f,
+          2.0f,  2.0f, -2.0f,
+          2.0f, -2.0f, -2.0f,
+          2.0f, -2.0f, -2.0f,
+          2.0f, -2.0f,  2.0f,
+          2.0f,  2.0f,  2.0f,
 
-         -1.0f, -1.0f, -1.0f,
-          1.0f, -1.0f, -1.0f,
-          1.0f, -1.0f,  1.0f,
-          1.0f, -1.0f,  1.0f,
-         -1.0f, -1.0f,  1.0f,
-         -1.0f, -1.0f, -1.0f,
+         -2.0f, -2.0f, -2.0f,
+          2.0f, -2.0f, -2.0f,
+          2.0f, -2.0f,  2.0f,
+          2.0f, -2.0f,  2.0f,
+         -2.0f, -2.0f,  2.0f,
+         -2.0f, -2.0f, -2.0f,
 
-         -1.0f,  1.0f, -1.0f,
-          1.0f,  1.0f, -1.0f,
-          1.0f,  1.0f,  1.0f,
-          1.0f,  1.0f,  1.0f,
-         -1.0f,  1.0f,  1.0f,
-         -1.0f,  1.0f, -1.0f,
+         -2.0f,  2.0f, -2.0f,
+          2.0f,  2.0f, -2.0f,
+          2.0f,  2.0f,  2.0f,
+          2.0f,  2.0f,  2.0f,
+         -2.0f,  2.0f,  2.0f,
+         -2.0f,  2.0f, -2.0f,
     };
     
     return v;

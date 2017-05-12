@@ -8,17 +8,18 @@
 #include <vector>
 
 enum Face {
-    NONE,
-    TOP,
-    FRONT,
-    RIGHT,
-    BOTTOM,
-    BACK,
-    LEFT,
+    TOP = 0,
+    FRONT = 1,
+    RIGHT = 2,
+    BOTTOM = 3,
+    BACK = 4,
+    LEFT = 5,
 };
 
-Face calculate_collission(const std::vector<glm::vec3> &vertices);
+void set_start_dir(const glm::vec3 &start_dir);
+void set_speed(float speed);
+glm::vec3 get_current_dir();
 
-glm::vec3 calculate_position(const glm::vec3 &old_pos, const std::vector<glm::vec3> &vertices, float dt);
+glm::vec3 calculate_position(const glm::vec3 &old_pos, float radius, float dt);
 
 #endif // _MOVEMENT_H

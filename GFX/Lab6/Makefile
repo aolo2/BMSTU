@@ -1,6 +1,6 @@
 APP_NAME=lab6
 APP_SRCS=main.cpp Shader/Shader.cpp Shapes/Shapes.cpp Object/Object.cpp Movement/Movement.cpp
-CFLAGS=-g -lGLEW -lglfw -lGL
+CFLAGS=-g -lGLEW -lglfw -lGL -lSOIL
 CC=g++
 
 lab6: $(SERVER_SRCS)

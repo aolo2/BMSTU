@@ -1,0 +1,9 @@
+lab_6
+
+start_pos = -0.102616 0.251544 0.1
+start_dir = 1 -1 0
+
+diffuse = 0.9
+time_elapsed = 116.098
+speed = 0.5
+light_pos = 0.6 0.4 0.6

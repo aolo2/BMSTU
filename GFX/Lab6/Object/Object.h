@@ -10,13 +10,16 @@
 
 class Object {
 public:
-    Object(Shape shape);
+    Object(Shape shape, GLenum drawmode = GL_FILL);
     ~Object();
     void render();
+    std::vector<glm::vec3> get_3d_collision();
 private:
     Shape shape;
     std::vector<GLfloat> vertices;
     GLuint VAO, VBO;
+    GLenum drawmode;
+    unsigned int slices = 60;
 };
 
 #endif

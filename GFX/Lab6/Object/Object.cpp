@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-Object::Object(Shape shape) : shape(shape), VAO(0), VBO(0) {
+Object::Object(Shape shape, GLenum drawmode) : shape(shape), VAO(0), 
+               VBO(0), drawmode(drawmode) {
     
     std::vector<glm::vec2> broken_line;
     broken_line.emplace_back(0.2f, -0.8f);
@@ -19,7 +20,7 @@ Object::Object(Shape shape) : shape(shape), VAO(0), VBO(0) {
     
     switch (shape) {
         case Shape::SPIN_SURFACE:
-            vertices = gen_surface(60, broken_line);
+            vertices = gen_surface(this->slices, broken_line);
             break;
         case Shape::CUBE:
             vertices = gen_cube();
@@ -57,11 +58,20 @@ Object::Object(Shape shape) : shape(shape), VAO(0), VBO(0) {
     glBindVertexArray(0);
 }
 
+std::vector<glm::vec3> Object::get_3d_collision() {
+    std::vector<glm::vec3> res;
+    for (int i = 0; i < vertices.size() - 5; i += 6) {
+        res.push_back(glm::vec3(vertices[i], vertices[i + 1], vertices[i + 2]));
+    }
+    
+    return res;
+}
+
 void Object::render() {
     glBindVertexArray(this->VAO);
-
-    unsigned int slices = 60;
     
+    glPolygonMode(GL_FRONT_AND_BACK, drawmode);
+
     switch (this->shape) {
         case Shape::SPIN_SURFACE:
             glDrawArrays(GL_TRIANGLE_FAN, 0, (slices + 1));

@@ -1,0 +1,12 @@
+lab_6
+
+start_pos = 0 0.01619 0.227173
+start_dir = 0 -1.5 -1
+light_pos = -0.07224 0.529571 0.849609
+
+textured = 1
+paused = 0
+diffuse = 0.9
+time_elapsed = 214.345
+speed = 0.5
+light_speed = 1

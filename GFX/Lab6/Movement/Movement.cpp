@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-float MOVEMENT_SPEED(0.8f);
+float LIGHT_SPEED(0.5f), MOVEMENT_SPEED(0.8f);
 glm::vec3 MOVEMENT_DIRECTION(1.0f);
 
 bool outside = false, inside_safe = true;
@@ -24,11 +24,56 @@ void set_speed(float speed) {
     MOVEMENT_SPEED = speed;
 }
 
+void set_light_speed(float light_speed) {
+    LIGHT_SPEED = light_speed;
+}
+
 glm::vec3 get_current_dir() {
     return MOVEMENT_DIRECTION;
 }
 
+float get_light_speed() {
+    return LIGHT_SPEED;
+}
+
+glm::vec3 calculate_light_positon(const glm::vec3 &old_light_pos, const bool * const keys, float dt) {
+    glm::vec3 dir(0.0f);
+    
+    if (keys[GLFW_KEY_UP]) {
+        if (keys[1001] & GLFW_MOD_SHIFT) {
+            dir -= normals[Face::BACK];
+        } else {
+            dir += normals[Face::BOTTOM];
+        }
+    }
+    
+    if (keys[GLFW_KEY_DOWN]) {
+        if (keys[1001] & GLFW_MOD_SHIFT) {
+            dir += normals[Face::BACK];   
+        } else {
+            dir -= normals[Face::BOTTOM];
+        }
+    }
+    
+    if (keys[GLFW_KEY_LEFT]) {
+        dir += normals[Face::RIGHT];   
+    }
+    
+    if (keys[GLFW_KEY_RIGHT]) {
+        dir += normals[Face::LEFT];      
+    }
+    
+    if (dir == glm::vec3(0.0f)) {
+	return old_light_pos;
+    }
+
+    return old_light_pos + glm::normalize(dir) * LIGHT_SPEED * dt;
+}
+
 glm::vec3 calculate_position(const glm::vec3 &old_pos, float radius, float dt) {
+    using glm::reflect;
+    using glm::abs;
+    
     if (!outside && (abs(old_pos.x) >= 1.0f || abs(old_pos.y) >= 1.0f|| abs(old_pos.z) >= 1.0f)) {
         outside = true;
         if (old_pos.x >= 1.0f) {

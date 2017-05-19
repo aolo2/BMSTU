@@ -23,7 +23,7 @@ private:
     std::vector<GLfloat> vertices;
     GLuint VAO, VBO, albedo;
     GLenum drawmode;
-    unsigned int slices = 60, broken_points;
+    unsigned int slices = 20, broken_points;
     float collision_radius;
 };
 

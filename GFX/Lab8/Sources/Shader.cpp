@@ -1,6 +1,6 @@
 #include "../Includes/Shader.h"
 
-using namespace Utils;
+namespace Utils {
 
 Shader::Shader(const std::string &vert_path, const std::string &frag_path) {
     const char *vs_src, *fs_src;
@@ -79,4 +79,6 @@ void Shader::setUniform1i(const std::string &varString, int value) {
 
 void Shader::useProgram() {
     glUseProgram(this->Program);
+}
+
 }

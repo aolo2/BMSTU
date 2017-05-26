@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-using namespace Utils;
+namespace Utils {
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up) {
     this->pos = pos;
@@ -70,4 +70,6 @@ void Camera::updateAngles() {
     this->front = glm::normalize(newFront);
     this->right = glm::normalize(glm::cross(this->front, this->worldUp));
     this->up = glm::normalize(glm::cross(this->right, this->front));
+}
+
 }

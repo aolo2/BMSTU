@@ -23,10 +23,15 @@ namespace Utils {
         GLuint gVAO() const { return VAO; }
         GLuint gVBO() const { return VBO; }
         std::vector<GLfloat> gvertices() const { return vertices; }
+        std::vector<GLfloat> gnormals() const { return normals; }
+        std::vector<GLfloat> gcolors() const { return colors; }
     private:
         Object &operator=(Object other);
         void init();
+        
         std::vector<GLfloat> vertices;
+        std::vector<GLfloat> colors;
+        std::vector<GLfloat> normals;
         GLuint VAO, VBO;
     };
 

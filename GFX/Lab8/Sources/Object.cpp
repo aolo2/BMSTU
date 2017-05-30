@@ -17,8 +17,8 @@ void Object::render() const {
 
 Object::Object(const Object &other) {
     vertices = other.gvertices();
-    vertices = other.gnormals();
-    vertices = other.gcolors();
+    normals = other.gnormals();
+    colors = other.gcolors();
     init();
 }
 

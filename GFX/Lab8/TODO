@@ -1,0 +1,76 @@
+1. Scene class
+    1.1. object vector
+    1.2. materials vector (shader + ???)
+    1.3. how to set uniforms?
+    1.4. geometry shader constructor
+        1.4.1. move parts of shader ctor to prvt methods and overload
+    1.5. Light class
+        1.5.1. Type, color, attenuation, position, shader (allwhite)
+        + scene gets light information (1.5.1.) from light objects
+    1.6. Camera
++ how to set uniforms?
++ drawmodes (culling, frontface, polygonmode)
+
+2. Texture class
+    2.1. ctor: 2D/3D, source
+    
+    
+    
+
+
+== Scene class model ==
+
+_ Everythging (objects, lights, materials, cameras) are stored
+in maps (mappiing from unique ID's)
+
+_ Means there are four maps.
+All of them can be deleted and added.
++ If no camera's (or no lights?) are in the scene - do not render or
+hard-render a black quad.
+
+_ For each of the four maps there exists a set of active ID's, meaing
+that not all map's contents are to be rendered - only active ones.
++ If set size == 0, do shorcuts.
+
+_ Each 'object ' object has an ID of it's material ->
+-> create materials before 'object' objects
+-> pass material ID to object
+-> use material ID (material contains shader pointer) to use shader program
+
+
+== Constructor ==
+
+_ Set unique counter ID to zero
+_ Set activeCamera ID to -1 (?)
+
+
+== Adding to scene ==
+
+_ adding a material
++ k_a, k_d, k_s, shader (pointer?). later - metallic, roughness, textures (a bunch) 
++ pass all the parameters to the addMaterial, returns ID // Keep shaders in a map too?
+
+_ adding a camera
++ proj, view matrix, position, up vector (default's to Y_POS)
++ returns an ID. can be set active in-place
++ only one active camera at a time!
+
+_ adding a light
++ position, type (dir, point, cone, sphere, mesh)
++ returns an ID and get's set active by default (?)
+
+_ adding an object
++ model matrix, material ID, mesh (or enum of shape)
+
+
+== Render() method ==
+
+++ 'update bool' is implied in the following
+
+_ pass the active camera to UBO
+_ pass the lights to UBO
+_ for all active objects
++ activate shader by getting material ID from object and looking it up in
+the material map -> getting the shader (pointer?) and 'useProgram()'
++ use the render method()
+++ when to pass the model matrix to shader?

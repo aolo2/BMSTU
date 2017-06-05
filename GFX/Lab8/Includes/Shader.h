@@ -16,18 +16,20 @@ namespace Utils {
     
     class Shader {
     public:
-        void useProgram();
+        void useProgram() const;
         void setUniform(const std::string &varString, const glm::mat4 &matrix);
         void setUniform(const std::string &varString, const glm::vec3 &vector);
         void setUniform(const std::string &varString, float value);
         void setUniform1i(const std::string &varString, int value);
+        void bindUniformBlock(const std::string &block);
+        
+        GLuint gProgram() const { return Program; }
             
         Shader(const std::string &vert_path, const std::string &frag_path);
-    private:
         Shader(const Shader &other);
+    private:
         Shader &operator=(Shader other);
         GLuint Program;
-        GLchar infoLog[512];
     };
 
 }

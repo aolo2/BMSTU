@@ -2,6 +2,63 @@
 
 namespace Utils::Colors {
 
+std::vector<GLfloat> quad() {
+    return std::vector<GLfloat> {
+         2.0f, 2.0f, 2.0f,
+         2.0f, 2.0f, 2.0f,
+         2.0f, 2.0f, 2.0f,
+         2.0f, 2.0f, 2.0f,
+         2.0f, 2.0f, 2.0f,
+         2.0f, 2.0f, 2.0f,
+    };
+}
+
+std::vector<GLfloat> cube_gray() {
+    return std::vector<GLfloat> {
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+    };
+}
+
 std::vector<GLfloat> cube() {
     return std::vector<GLfloat> {
         0.0f,  0.5f,  0.0f,
@@ -52,6 +109,17 @@ std::vector<GLfloat> cube() {
 
 namespace Utils::Normals {
 
+std::vector<GLfloat> quad() {
+    return std::vector<GLfloat> {
+         0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 1.0f,
+    };
+}
+
 std::vector<GLfloat> cube() {
     return std::vector<GLfloat> {
         0.0f,  0.0f,  1.0f,
@@ -101,6 +169,17 @@ std::vector<GLfloat> cube() {
 }
 
 namespace Utils::Shapes {
+
+std::vector<GLfloat> quad() {
+    return std::vector<GLfloat> {
+        -0.5f, -0.5f,  0.0f,
+         0.5f, -0.5f,  0.0f,
+         0.5f,  0.5f,  0.0f,
+        -0.5f, -0.5f,  0.0f,
+         0.5f,  0.5f,  0.0f,
+        -0.5f,  0.5f,  0.0f,    
+    };
+}
 
 std::vector<GLfloat> cube() {
     return std::vector<GLfloat> {
@@ -169,7 +248,7 @@ std::vector<GLfloat> sphere(unsigned int slices) {
     }
 
 
-    for (int i = 0; i < slices * slices + slices; i++){
+    for (unsigned int i = 0; i < slices * slices + slices; i++){
         index_vector.push_back(i);
         index_vector.push_back(i + slices + 1);
         index_vector.push_back(i + slices);
@@ -180,7 +259,7 @@ std::vector<GLfloat> sphere(unsigned int slices) {
     }
 
     std::vector<float> res;
-    for (int i = 0, j = 0; i < index_vector.size(); i++, j+= 3) {
+    for (unsigned int i = 0, j = 0; i < index_vector.size(); i++, j+= 3) {
 
         glm::vec3 tmp = vertices_vector[index_vector[i]];
 

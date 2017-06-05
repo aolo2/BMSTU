@@ -2,9 +2,12 @@
 
 namespace Utils {
 
+Shader::Shader(const Shader &other) Program(other.gProgram()) {}
+
 Shader::Shader(const std::string &vert_path, const std::string &frag_path) {
     const char *vs_src, *fs_src;
-
+    GLchar infoLog[512];
+    
     // Get source
     std::ifstream t1(vert_path);
     std::string vert_str((std::istreambuf_iterator<char>(t1)),
@@ -43,8 +46,8 @@ Shader::Shader(const std::string &vert_path, const std::string &frag_path) {
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
-    glAttachShader(this->Program, fs);
     glAttachShader(this->Program, vs);
+    glAttachShader(this->Program, fs);
     glLinkProgram(this->Program);
 
     glGetProgramiv(this->Program, GL_LINK_STATUS, &success);
@@ -55,6 +58,11 @@ Shader::Shader(const std::string &vert_path, const std::string &frag_path) {
 
     glDeleteShader(vs);
     glDeleteShader(fs);
+}
+
+void Shader::bindUniformBlock(const std::string &block, unsigned int num) {
+    GLint index = glGetUniformBlockIndex(shaderA.ID, block.c_str());
+    glUniformBlockBinding(this->Program, index, num);
 }
 
 void Shader::setUniform(const std::string &varString, const glm::mat4 &matrix) {
@@ -77,7 +85,7 @@ void Shader::setUniform1i(const std::string &varString, int value) {
     glUniform1i(loc, value);
 }
 
-void Shader::useProgram() {
+void Shader::useProgram() const {
     glUseProgram(this->Program);
 }
 

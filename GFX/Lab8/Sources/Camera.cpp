@@ -1,7 +1,5 @@
 #include "../Includes/Camera.h"
 
-#include <GLFW/glfw3.h>
-
 namespace Utils {
 
 Camera::Camera(glm::vec3 pos, glm::vec3 up) {

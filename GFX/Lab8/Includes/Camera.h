@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <GLFW/glfw3.h>
+
 namespace Utils {
 
     const GLfloat YAW = 0.0f;
@@ -16,17 +18,24 @@ namespace Utils {
     class Camera {
     public:
         Camera(glm::vec3 pos, glm::vec3 up);
-        Camera() : Camera(glm::vec3(-3.0f, 2.0f, 0.75f), glm::vec3(0.0f, 1.0f, 0.0f)) {}
-        glm::mat4 viewMatrix();
+        Camera() : Camera(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)) {}
+        
         glm::vec3 getPosition();
         glm::vec3 getFront();
+        glm::mat4 gview() const { return viewMatrix(); }
+        glm::mat4 gproj() const { return proj; }
+        
         void processCursor(GLfloat x_offset, GLfloat y_offset, GLboolean capPitch);
         void processMovement(GLint key);
     private:
-        glm::vec3 pos, front, up, right, worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::mat4 viewMatrix();
+        void updateAngles();
+        
+        glm::vec3 pos, front, up, right;
+        glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
         GLfloat yaw = YAW, pitch = PITCH;
         GLfloat movementSpeed = SPEED, mouseSensitivity = SENSITIVITY;
-        void updateAngles();
+        const glm::mat4 proj;
     };
 
 }

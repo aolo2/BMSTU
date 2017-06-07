@@ -4,6 +4,8 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#define GLM_FORCE_RADIANS
+
 // GLM (maths)
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,24 +16,40 @@
 const int WINDOW_WIDTH = 1280;
 const int WINDOW_HEIGHT = 720;
 
-enum {
-    INVISIBLE = -1,
-    BORDER = 0,
-    VISIBLE = 1,
-};
+namespace Utils {
 
-// translate cursor coordinates to relative (WINDOW_WIDTH, WINDOW_HEIGHT) to (1, 1)
-glm::vec2 window_to_relative(double x, double y);
+    enum {
+        INVISIBLE = -1,
+        BORDER = 0,
+        VISIBLE = 1,
+    };
 
-void rebind(GLuint vao, GLuint vbo, const std::vector<glm::vec2> data);
+    enum Type {
+        UNDEFINED = -2,
+        ENTRY = -1,
+        NONE = 0,
+        EXIT = 1,
+    };
 
-inline int sign(float value) { return (value == 0) ? BORDER : ((value > 0) ? VISIBLE : INVISIBLE); }
+    struct Vertex {
+        glm::vec2 coords;
+        float param;
+        Type type;
+    };
 
-glm::vec2 intersection_point(const glm::vec2 &P1, const glm::vec2 &P2, 
-                            const glm::vec2 &W1, const glm::vec2 &W2);
+    // translate cursor coordinates to relative (WINDOW_WIDTH, WINDOW_HEIGHT) to (1, 1)
+    glm::vec2 window_to_relative(double x, double y);
 
-int visibility(const glm::vec2 &point, const glm::vec2 &P1, const glm::vec2 &P2);
+    void rebind(GLuint VAO, GLuint VBO, const std::vector<glm::vec2> data);
 
-std::vector<glm::vec2> clip(std::vector<glm::vec2> cutter, std::vector<glm::vec2> cuttie);
+    inline int sign(float value) { return (value == 0) ? BORDER : ((value > 0) ? VISIBLE : INVISIBLE); }
+
+    Vertex intersection_point(const glm::vec2 &P1, const glm::vec2 &P2,
+                                    const glm::vec2 &W1, const glm::vec2 &W2);
+
+    int visibility(const glm::vec2 &point, const glm::vec2 &P1, const glm::vec2 &P2);
+
+    std::vector<std::vector<Vertex>> clip(std::vector<glm::vec2> cutter, const std::vector<glm::vec2> &cuttie);
+}
 
 #endif

@@ -2,8 +2,8 @@
 #include "Includes/Drawable.h"
 #include "Includes/Callbacks.h"
 
-const unsigned int WINDOW_WIDTH = 1280;
-const unsigned int WINDOW_HEIGHT = 720;
+const unsigned int WINDOW_WIDTH = 640;
+const unsigned int WINDOW_HEIGHT = 480;
 const float aspect_ratio = static_cast<float>(WINDOW_WIDTH) / WINDOW_HEIGHT;
 
 int main()
@@ -28,25 +28,33 @@ int main()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     utils::shader color_shader("GLSL/pass.vert", "GLSL/color.frag");
+    utils::drawable teapot("Models/wt_teapot_tri.obj");
     utils::drawable room("Models/cornell_box.obj");
-    
+
     // 278.0f, 0.0f, 279.5f -- light source center
 
     glm::mat4 proj, view, model;
-    model = glm::scale(glm::mat4(), glm::vec3(1.0f));
-    view = glm::translate(glm::mat4(), glm::vec3(-278.0f, -273.0f, -800.0f));
-    proj = glm::perspective(glm::radians(45.0f), aspect_ratio, 0.1f, 10000.0f);
+    view = glm::translate(glm::mat4(), glm::vec3(0.0f, -0.5f, -2.0f));
+    proj = glm::perspective(glm::radians(45.0f), aspect_ratio, 0.1f, 100.0f);
 
     color_shader.use_program();
     color_shader.set_uniform<glm::mat4>("proj", proj);
     color_shader.set_uniform<glm::mat4>("view", view);
-    color_shader.set_uniform<glm::mat4>("model", model);
 
     while (glfwWindowShouldClose(window) == 0) {
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // should be just teapot.render()
+        model = glm::scale(glm::mat4(), glm::vec3(0.5f));
+        color_shader.set_uniform<glm::mat4>("model", model);
+        teapot.render();
+
+        // should be just room.render()
+        model = glm::scale(glm::mat4(), glm::vec3(0.15f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f));
+        color_shader.set_uniform<glm::mat4>("model", model);
         room.render();
 
         glfwSwapBuffers(window);

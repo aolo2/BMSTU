@@ -21,7 +21,7 @@ void shader::attach_shader(const std::string& path, GLenum stage)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(shader, 512, NULL, info_log);
-        std::cerr << "Vertex shader compilaton failed\n"
+        std::cerr << ((stage == GL_VERTEX_SHADER) ? "Vertex" : "Fragment") << " shader compilaton failed\n"
                   << info_log << std::endl;
     }
 

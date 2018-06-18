@@ -1,0 +1,111 @@
+* Successfully read 1080 bytes
+
+=== INPUT ===
+non-terminal GRAMMAR, N_LIST, N_LIST_ITEMS, N_LIST_ITEMS_2, T_LIST, T_LIST_ITEMS, T_LIST_ITEMS_2, TERMINAL, RULES, RULES_2, RULE, RIGHT_PART, ALTERNATIVES, ALTERNATIVE, TN, TN_LIST, TN_LIST_2, AXIOM;
+terminal non-terminal, nt_name, ',', ';', terminal, quoted_symbol, lc_letter, ::=, '|', epsilon, axiom, lc_word;
+
+GRAMMAR ::= N_LIST T_LIST RULES AXIOM;
+
+N_LIST         ::= non-terminal N_LIST_ITEMS ';';
+N_LIST_ITEMS   ::= nt_name N_LIST_ITEMS_2;
+N_LIST_ITEMS_2 ::= ',' nt_name N_LIST_ITEMS_2  | epsilon;
+
+T_LIST         ::= terminal T_LIST_ITEMS ';';
+T_LIST_ITEMS   ::= TERMINAL T_LIST_ITEMS_2;
+T_LIST_ITEMS_2 ::= ',' TERMINAL T_LIST_ITEMS_2  | epsilon;
+TERMINAL       ::= quoted_symbol | lc_word;
+
+RULES        ::= RULE RULES_2;
+RULES_2      ::= RULE RULES_2 | epsilon;
+RULE         ::= nt_name ::= RIGHT_PART ';';
+RIGHT_PART   ::= ALTERNATIVE ALTERNATIVES;
+ALTERNATIVES ::= '|' ALTERNATIVE ALTERNATIVES | epsilon;
+ALTERNATIVE  ::= TN TN_LIST;
+TN           ::= TERMINAL | nt_name | epsilon;
+TN_LIST      ::= TN TN_LIST_2;
+TN_LIST_2    ::= TN TN_LIST_2 | epsilon;
+
+axiom GRAMMAR;
+
+=== GRAMMAR ===
+Non-terminal count: 19
+Terminal count: 12
+Axiom: GRAMMAR
+Rules:
+2 ::= [ 3 6 10 19 ]
+3 ::= [ -2 4 -5 ]
+4 ::= [ -3 5 ]
+5 ::= [ -4 -3 5 ]
+5 ::= [ -1 ]
+6 ::= [ -6 7 -5 ]
+7 ::= [ 9 8 ]
+8 ::= [ -4 9 8 ]
+8 ::= [ -1 ]
+9 ::= [ -7 ]
+9 ::= [ -12 ]
+10 ::= [ 12 11 ]
+11 ::= [ 12 11 ]
+11 ::= [ -1 ]
+12 ::= [ -3 -9 13 -5 ]
+13 ::= [ 15 14 ]
+14 ::= [ -10 15 14 ]
+14 ::= [ -1 ]
+15 ::= [ 16 17 ]
+16 ::= [ 9 ]
+16 ::= [ -3 ]
+16 ::= [ -1 ]
+17 ::= [ 16 18 ]
+18 ::= [ 16 18 ]
+18 ::= [ -1 ]
+Table:
+GRAMMAR         (epsilon)[ ERROR ]                                     (non-terminal)[ N_LIST T_LIST RULES AXIOM ]            (nt_name)[ ERROR ]                                     (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+N_LIST          (epsilon)[ ERROR ]                                     (non-terminal)[ non-terminal N_LIST_ITEMS ';' ]        (nt_name)[ ERROR ]                                     (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+N_LIST_ITEMS    (epsilon)[ ERROR ]                                     (non-terminal)[ ERROR ]                                (nt_name)[ nt_name N_LIST_ITEMS_2 ]                    (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+N_LIST_ITEMS_2  (epsilon)[ epsilon ]                                   (non-terminal)[ ERROR ]                                (nt_name)[ ERROR ]                                     (',')[ ',' nt_name N_LIST_ITEMS_2 ]                    (';')[ epsilon ]                                       (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+T_LIST          (epsilon)[ ERROR ]                                     (non-terminal)[ ERROR ]                                (nt_name)[ ERROR ]                                     (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ terminal T_LIST_ITEMS ';' ]                (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+T_LIST_ITEMS    (epsilon)[ ERROR ]                                     (non-terminal)[ ERROR ]                                (nt_name)[ ERROR ]                                     (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ TERMINAL T_LIST_ITEMS_2 ]             (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ TERMINAL T_LIST_ITEMS_2 ]                   
+T_LIST_ITEMS_2  (epsilon)[ epsilon ]                                   (non-terminal)[ ERROR ]                                (nt_name)[ ERROR ]                                     (',')[ ',' TERMINAL T_LIST_ITEMS_2 ]                   (';')[ epsilon ]                                       (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+TERMINAL        (epsilon)[ ERROR ]                                     (non-terminal)[ ERROR ]                                (nt_name)[ ERROR ]                                     (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ quoted_symbol ]                       (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ lc_word ]                                   
+RULES           (epsilon)[ ERROR ]                                     (non-terminal)[ ERROR ]                                (nt_name)[ RULE RULES_2 ]                              (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+RULES_2         (epsilon)[ epsilon ]                                   (non-terminal)[ ERROR ]                                (nt_name)[ RULE RULES_2 ]                              (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+RULE            (epsilon)[ ERROR ]                                     (non-terminal)[ ERROR ]                                (nt_name)[ nt_name ::= RIGHT_PART ';' ]                (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+RIGHT_PART      (epsilon)[ ALTERNATIVE ALTERNATIVES ]                  (non-terminal)[ ERROR ]                                (nt_name)[ ALTERNATIVE ALTERNATIVES ]                  (',')[ ERROR ]                                         (';')[ ALTERNATIVE ALTERNATIVES ]                      (terminal)[ ERROR ]                                    (quoted_symbol)[ ALTERNATIVE ALTERNATIVES ]            (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ALTERNATIVE ALTERNATIVES ]                  
+ALTERNATIVES    (epsilon)[ epsilon ]                                   (non-terminal)[ ERROR ]                                (nt_name)[ ERROR ]                                     (',')[ ERROR ]                                         (';')[ epsilon ]                                       (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ '|' ALTERNATIVE ALTERNATIVES ]                  (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+ALTERNATIVE     (epsilon)[ TN TN_LIST ]                                (non-terminal)[ ERROR ]                                (nt_name)[ TN TN_LIST ]                                (',')[ ERROR ]                                         (';')[ TN TN_LIST ]                                    (terminal)[ ERROR ]                                    (quoted_symbol)[ TN TN_LIST ]                          (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ TN TN_LIST ]                                    (axiom)[ ERROR ]                                       (lc_word)[ TN TN_LIST ]                                
+TN              (epsilon)[ epsilon ]                                   (non-terminal)[ ERROR ]                                (nt_name)[ nt_name epsilon ]                           (',')[ ERROR ]                                         (';')[ epsilon ]                                       (terminal)[ ERROR ]                                    (quoted_symbol)[ TERMINAL epsilon ]                    (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ epsilon ]                                       (axiom)[ ERROR ]                                       (lc_word)[ TERMINAL epsilon ]                          
+TN_LIST         (epsilon)[ TN TN_LIST_2 ]                              (non-terminal)[ ERROR ]                                (nt_name)[ TN TN_LIST_2 ]                              (',')[ ERROR ]                                         (';')[ TN TN_LIST_2 ]                                  (terminal)[ ERROR ]                                    (quoted_symbol)[ TN TN_LIST_2 ]                        (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ TN TN_LIST_2 ]                                  (axiom)[ ERROR ]                                       (lc_word)[ TN TN_LIST_2 ]                              
+TN_LIST_2       (epsilon)[ TN TN_LIST_2 epsilon ]                      (non-terminal)[ ERROR ]                                (nt_name)[ TN TN_LIST_2 ]                              (',')[ ERROR ]                                         (';')[ TN TN_LIST_2 epsilon ]                          (terminal)[ ERROR ]                                    (quoted_symbol)[ TN TN_LIST_2 ]                        (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ TN TN_LIST_2 epsilon ]                          (axiom)[ ERROR ]                                       (lc_word)[ TN TN_LIST_2 ]                              
+AXIOM           (epsilon)[ ERROR ]                                     (non-terminal)[ ERROR ]                                (nt_name)[ ERROR ]                                     (',')[ ERROR ]                                         (';')[ ERROR ]                                         (terminal)[ ERROR ]                                    (quoted_symbol)[ ERROR ]                               (lc_letter)[ ERROR ]                                   (::=)[ ERROR ]                                         ('|')[ ERROR ]                                         (axiom)[ ERROR ]                                       (lc_word)[ ERROR ]                                     
+Terminals:
+-1: epsilon
+-2: non-terminal
+-3: nt_name
+-4: ','
+-5: ';'
+-6: terminal
+-7: quoted_symbol
+-8: lc_letter
+-9: ::=
+-10: '|'
+-11: axiom
+-12: lc_word
+Non-terminals:
+1: ERROR
+2: GRAMMAR
+3: N_LIST
+4: N_LIST_ITEMS
+5: N_LIST_ITEMS_2
+6: T_LIST
+7: T_LIST_ITEMS
+8: T_LIST_ITEMS_2
+9: TERMINAL
+10: RULES
+11: RULES_2
+12: RULE
+13: RIGHT_PART
+14: ALTERNATIVES
+15: ALTERNATIVE
+16: TN
+17: TN_LIST
+18: TN_LIST_2
+19: AXIOM

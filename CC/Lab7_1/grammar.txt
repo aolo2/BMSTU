@@ -1,0 +1,206 @@
+T =
+{
+  non-terminal
+  nt_name ([A-Z][A-Z0-9]*))
+  ,
+  ;
+  terminal
+  quoted_symbol
+  lc_letter (a-z)
+  ::=
+  |
+  epsilon
+  axiom
+  lc_word ([a-z]+)
+}
+
+N =
+{
+  GRAMMAR,
+  N_LIST,
+  N_LIST_ITEMS,
+  N_LIST_ITEMS_2,
+  NON_TERMINAL,
+  T_LIST,
+  T_LIST_ITEMS,
+  T_LIST_ITEMS_2,
+  TERMINAL,
+  RULES,
+  RULES_2,
+  RULE,
+  RIGHT_PART,
+  ALTERNATIVES,
+  ALTERNATIVE,
+  TN,
+  TN_LIST,
+  TN_LIST_2,
+  AXIOM
+}
+
+G =
+{
+  GRAMMAR ::= N_LIST T_LIST RULES AXIOM
+
+  N_LIST         ::= 'non-terminal' N_LIST_ITEMS ';'
+  N_LIST_ITEMS   ::= nt_name N_LIST_ITEMS_2
+  N_LIST_ITEMS_2 ::= ',' nt_name N_LIST_ITEMS_2
+  N_LIST_ITEMS_2 ::= epsilon
+
+  T_LIST         ::= 'terminal' T_LIST_ITEMS ';'
+  T_LIST_ITEMS   ::= TERMINAL T_LIST_ITEMS_2
+  T_LIST_ITEMS_2 ::= ',' TERMINAL T_LIST_ITEMS_2
+  T_LIST_ITEMS_2 ::= epsilon
+  TERMINAL       ::= quoted_symbol
+  TERMINAL       ::= lc_word
+
+  RULES        ::= RULE RULES_2
+  RULES_2      ::= RULE RULES_2
+  RULES_2      ::= epsilon
+  RULE         ::= nt_name '::=' RIGHT_PART ';'
+  RIGHT_PART   ::= ALTERNATIVE ALTERNATIVES
+  ALTERNATIVES ::= '|' ALTERNATIVE ALTERNATIVES
+  ALTERNATIVES ::= epsilon
+  ALTERNATIVE  ::= TN TN_LIST
+  TN           ::= TERMINAL
+  TN           ::= nt_name
+  TN           ::= 'epsilon'
+  TN_LIST      ::= TN TN_LIST_2
+  TN_LIST_2    ::= TN TN_LIST_2
+  TN_LIST_2    ::= epsilon
+
+  AXIOM ::= 'axiom' nt_name ';'
+}
+
+FIRST =
+{
+  N_LIST: ('non-terminal')
+  N_LIST_ITEMS: (nt_name)
+  N_LIST_ITEMS_2: (',' epsilon)
+
+  T_LIST: ('terminal')
+  T_LIST_ITEMS: (quoted_symbol lc_word)
+  T_LIST_ITEMS_2: (',' epsilon)
+  TERMINAL: (quoted_symbol lc_word)
+
+  RULES: (nt_name)
+  RULES_2: (nt_name epsilon)
+  RULE: (nt_name)
+  RIGHT_PART: (quoted_symbol lc_word nt_name 'epsilon')
+  ALTERNATIVES: ('|' epsilon)
+  ALTERNATIVE: (quoted_symbol lc_word nt_name 'epsilon')
+  TN: (quoted_symbol lc_word nt_name 'epsilon')
+  TN_LIST: (quoted_symbol lc_word nt_name 'epsilon')
+  TN_LIST_2: (quoted_symbol lc_word nt_name 'epsilon' epsilon)
+
+  AXIOM: ('axiom')
+}
+
+FOLLOW =
+{
+  GRAMMAR: ($)
+
+  N_LIST: ('terminal')
+  N_LIST_ITEMS: (';')
+  N_LIST_ITEMS_2: (';')
+
+  T_LIST: (nt_name)
+  T_LIST_ITEMS: (';')
+  T_LIST_ITEMS_2: (';')
+  TERMINAL: (',')
+
+  RULES: ('axiom')
+  RULES_2: (';')
+  RULE: (';')
+  RIGHT_PART: (';')
+  ALTERNATIVES: (';')
+  ALTERNATIVE: ('|', ';')
+  TN: (nt_name, '|', ';' 'epsilon')
+  TN_LIST: (';')
+  TN_LIST_2: (';')
+
+  AXIOM: ($)
+}
+
+====== X, u, FIRST(u), FOLLOW(X) =====
+
+GRAMMAR
+  FIRST(N_LIST T_LIST RULES AXIOM)              = ('non-terminal')
+  FOLLOW(GRAMMAR)                               = ($)
+
+N_LIST
+  FIRST('non-terminal' N_LIST_ITEMS ';')        = ('non-terminal')
+  FOLLOW(N_LIST)                                = ('terminal')
+
+N_LIST_ITEMS
+  FIRST(nt_name N_LIST_ITEMS_2)                 = (nt_name)
+  FOLLOW(N_LIST_ITEMS)                          = (';')
+
+N_LIST_ITEMS_2
+  FIRST(',' nt_name N_LIST_ITEMS_2)             = (',')
+  FIRST(epsilon)                                = (epsilon)
+  FOLLOW(N_LIST_ITEMS_2)                        = (';')
+
+T_LIST
+  FIRST('terminal' T_LIST_ITEMS ';')            = ('terminal')
+  FOLLOW(T_LIST)                                = (nt_name)
+
+T_LIST_ITEMS
+  FIRST(TERMINAL T_LIST_ITEMS_2)                = (quoted_symbol lc_word)
+  FOLLOW(T_LIST_ITEMS)                          = (';')
+
+T_LIST_ITEMS_2
+  FIRST(',' TERMINAL T_LIST_ITEMS_2)            = (',')
+  FIRST(epsilon)                                = (epsilon)
+  FOLLOW(T_LIST_ITEMS_2)                        = (';')
+
+TERMINAL
+  FIRST(quoted_symbol)                          = (quoted_symbol)
+  FIRST(lc_word)                                = (lc_word)
+  FOLLOW(TERMINAL)                              = (',')
+
+RULES
+  FIRST(RULE RULES_2)                           = (nt_name)
+  FOLLOW(RULES)                                 = ('axiom')
+
+RULES_2
+  FIRST(RULE RULES_2)                           = (nt_name)
+  FIRST(epsilon)                                = (epsilon)
+  FOLLOW(RULES_2)                               = (';')
+
+RULE
+  FIRST(nt_name '::=' RIGHT_PART ';')           = (nt_name)
+  FOLLOW(RULE)                                  = (';')
+
+RIGHT_PART
+  FIRST(ALTERNATIVE ALTERNATIVES)               = (quoted_symbol lc_word nt_name 'epsilon')
+  FOLLOW(RIGHT_PART)                            = (';')
+
+ALTERNATIVES
+  FIRST('|' ALTERNATIVE ALTERNATIVES)           = ('|')
+  FIRST(epsilon)                                = (epsilon)
+  FOLLOW(ALTERNATIVES)                          = (';')
+
+ALTERNATIVE
+  FIRST(TN TN_LIST)                             = (quoted_symbol lc_word nt_name 'epsilon')
+  FOLLOW(ALTERNATIVE)                           = ('|', ';')
+
+TN
+  FIRST(TERMINAL)                               = (quoted_symbol lc_word)
+  FIRST(nt_name)                                = (nt_name)
+  FIRST('epsilon')                              = ('epsilon')
+  FOLLOW(TN)                                    = (nt_name, '|', ';' 'epsilon')
+
+TN_LIST
+  FIRST(TN TN_LIST_2)                           = (quoted_symbol lc_word nt_name 'epsilon')
+  FOLLOW(TN_LIST)                               = (';')
+
+TN_LIST_2
+  FIRST(TN TN_LIST_2)                           = (quoted_symbol lc_word nt_name 'epsilon')
+  FIRST(epsilon)                                = (epsilon)
+  FOLLOW(TN_LIST_2)                             = (';')
+
+AXIOM
+  FIRST('axiom' nt_name ';')                    = ('axiom')
+  FOLLOW(AXIOM)                                 = ($)
+
+==================

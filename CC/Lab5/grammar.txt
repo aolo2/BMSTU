@@ -1,0 +1,22 @@
+/*
+  TRIPLE-QMARKS ::= """
+  LETTER ::= [a-zA-Z]
+  DIGIT ::= [0-9]
+  F ::= 'f'
+  N ::= 'n'
+
+  DEF ::= 'd' EF
+  EF ::= 'e' F
+  RETURN ::= 'r' ETURN
+  ETURN ::= 'e' TURN
+  TURN ::= 't' URN
+  URN ::= 'u' RN
+  RN ::= 'r' N
+
+  WHITESPACE ::= (' ' | '\t' | '\n') (' ' | '\t' | '\n')*
+  IDENT ::= LETTER (LETTER | DIGIT)*
+  NUMBER ::= DIGIT (DIGIT)*
+  KEYWORD ::= DEF | RETURN
+  SPECIAL ::= '(' | ')' | ':'
+  COMMENT ::= TRIPLE-QMARKS (LETTER | NUMBER)* TRIPLE-QMARKS
+*/

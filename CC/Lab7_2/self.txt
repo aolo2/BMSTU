@@ -1,0 +1,25 @@
+non-terminal GRAMMAR, N_LIST, N_LIST_ITEMS, N_LIST_ITEMS_2, T_LIST, T_LIST_ITEMS, T_LIST_ITEMS_2, TERMINAL, RULES, RULES_2, RULE, RIGHT_PART, ALTERNATIVES, ALTERNATIVE, TN, TN_LIST, TN_LIST_2, AXIOM;
+terminal non-terminal, nt_name, ',', ';', terminal, quoted_symbol, lc_letter, ::=, '|', epsilon, axiom, lc_word;
+
+GRAMMAR ::= N_LIST T_LIST RULES AXIOM;
+
+N_LIST         ::= non-terminal N_LIST_ITEMS ';';
+N_LIST_ITEMS   ::= nt_name N_LIST_ITEMS_2;
+N_LIST_ITEMS_2 ::= ',' nt_name N_LIST_ITEMS_2  | epsilon;
+
+T_LIST         ::= terminal T_LIST_ITEMS ';';
+T_LIST_ITEMS   ::= TERMINAL T_LIST_ITEMS_2;
+T_LIST_ITEMS_2 ::= ',' TERMINAL T_LIST_ITEMS_2  | epsilon;
+TERMINAL       ::= quoted_symbol | lc_word;
+
+RULES        ::= RULE RULES_2;
+RULES_2      ::= RULE RULES_2 | epsilon;
+RULE         ::= nt_name ::= RIGHT_PART ';';
+RIGHT_PART   ::= ALTERNATIVE ALTERNATIVES;
+ALTERNATIVES ::= '|' ALTERNATIVE ALTERNATIVES | epsilon;
+ALTERNATIVE  ::= TN TN_LIST;
+TN           ::= TERMINAL | nt_name | epsilon;
+TN_LIST      ::= TN TN_LIST_2;
+TN_LIST_2    ::= TN TN_LIST_2 | epsilon;
+
+axiom GRAMMAR;
